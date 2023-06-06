@@ -2,7 +2,7 @@ import { Table } from "components";
 import useGetAll from "hooks/useGetAll";
 import { Modal, Button } from "antd";
 import { useState } from "react";
-import Form from "./form";
+import FormComponent from "./form";
 const Users = () => {
   const { data } = useGetAll({
     url: "/posts",
@@ -30,7 +30,7 @@ const Users = () => {
         destroyOnClose
         title="Create Post"
       >
-        <Form />
+        <FormComponent {...{ modal, setModal }} />
       </Modal>
 
       <div className="flex justify-end mb-5">
