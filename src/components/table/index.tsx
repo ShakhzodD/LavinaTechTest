@@ -2,19 +2,17 @@
 import { Table, TableColumnsType, Tooltip } from "antd";
 
 type Props = {
-  items: [];
+  items: any;
   hasPagination?: boolean;
   customPagination?: boolean;
   isLoading?: boolean;
   rowKey?: string;
-  scroll?: { x?: number; y?: number };
-  summary?: any;
   hasDelete?: boolean;
   hasEdit?: boolean;
   hasView?: boolean;
-  editAction: (data: object) => void;
-  deleteAction: (data: object) => void;
-  viewAction: (data: object) => void;
+  editAction?: (data: object) => void;
+  deleteAction?: (data: object) => void;
+  viewAction?: (data: object) => void;
   columns: TableColumnsType<any>;
 };
 
@@ -22,14 +20,12 @@ const table = ({
   items,
   isLoading,
   columns,
-  scroll,
   hasPagination = true,
   hasEdit = false,
   hasDelete = false,
   hasView = false,
-  editAction,
-  deleteAction,
-  viewAction,
+  editAction = () => null,
+  deleteAction = () => null,
   rowKey = "id",
 }: Props) => {
   const newColumns: TableColumnsType<any> =
@@ -66,17 +62,6 @@ const table = ({
                       </div>
                     </Tooltip>
                   ) : null}
-                  {hasView ? (
-                    <Tooltip title="Посмотреть">
-                      <div
-                        className="text-blue-500 cursor-pointer "
-                        onClick={() => viewAction(item)}
-                      >
-                        {/* <EyeFilled /> */}
-                        eyefield
-                      </div>
-                    </Tooltip>
-                  ) : null}
                 </div>
               );
             },
@@ -87,7 +72,6 @@ const table = ({
   return (
     <>
       <Table
-        scroll={scroll}
         columns={newColumns}
         rowKey={rowKey}
         dataSource={items}

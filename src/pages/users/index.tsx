@@ -1,12 +1,17 @@
 import { Table } from "components";
 import useGetAll from "hooks/useGetAll";
-import { Modal, Button } from "antd";
+import { Modal, Button, notification } from "antd";
 import { useState } from "react";
 import FormComponent from "./form";
+import usePost from "hooks/usePost";
+import { get } from "lodash";
+import { useQueryClient } from "@tanstack/react-query";
 const Users = () => {
-  const { data } = useGetAll({
-    url: "/posts",
-    name: "posts",
+  const { mutate } = usePost();
+  const queryClient = useQueryClient();
+  const { data, isLoading } = useGetAll({
+    url: "/userlavin",
+    name: "userlavin",
   });
   const [modal, setModal] = useState<{
     create: boolean;
@@ -17,6 +22,39 @@ const Users = () => {
     data: null,
     update: false,
   });
+
+  const deleteAction = (id: number) => {
+    Modal.confirm({
+      title: "Вы действительно хотите удалить?",
+      content: "",
+      okText: "Да",
+      cancelText: "Нет",
+      onOk: () => {
+        mutate(
+          {
+            url: `/userlavin/${id}`,
+            data: null,
+            method: "delete",
+          },
+          {
+            onSuccess: () => {
+              notification.success({
+                message: "Успешно удалена",
+              });
+              queryClient.invalidateQueries({ queryKey: ["userlavin"] });
+            },
+            onError: error => {
+              notification.error({
+                message: get(error, "message")
+                  ? get(error, "message")
+                  : "Что-то пошло не так",
+              });
+            },
+          }
+        );
+      },
+    });
+  };
   return (
     <div>
       <Modal
@@ -28,7 +66,7 @@ const Users = () => {
         closable={true}
         footer={false}
         destroyOnClose
-        title="Create Post"
+        title={modal.create ? "Create user" : "Update user"}
       >
         <FormComponent {...{ modal, setModal }} />
       </Modal>
@@ -45,11 +83,48 @@ const Users = () => {
         </Button>
       </div>
       <Table
+        hasEdit={true}
+        isLoading={isLoading}
+        hasDelete={true}
+        deleteAction={(value: { id?: number }) => {
+          deleteAction(get(value, "id", 0));
+        }}
+        editAction={value => {
+          setModal({ create: false, data: value, update: true });
+        }}
         items={data || []}
         columns={[
           {
-            title: "sd",
+            title: "id",
             dataIndex: "id",
+            render: value => {
+              return value && value;
+            },
+          },
+          {
+            title: "Name",
+            dataIndex: "name",
+            render: value => {
+              return value && value;
+            },
+          },
+          {
+            title: "Email",
+            dataIndex: "email",
+            render: value => {
+              return value && value;
+            },
+          },
+          {
+            title: "Key",
+            dataIndex: "key",
+            render: value => {
+              return value && value;
+            },
+          },
+          {
+            title: "Secret",
+            dataIndex: "secret",
             render: value => {
               return value && value;
             },

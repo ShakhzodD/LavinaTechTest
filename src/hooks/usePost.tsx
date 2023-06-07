@@ -2,9 +2,9 @@ import { useMutation } from "@tanstack/react-query";
 import api from "api";
 
 interface IPostOptions {
-  method: "post" | "put";
+  method: "post" | "put" | "delete";
   url: string;
-  data: object | object[] | [];
+  data: any;
 }
 
 export async function postData(options: IPostOptions) {

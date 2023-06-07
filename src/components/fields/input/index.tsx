@@ -1,7 +1,6 @@
 import { Input } from "antd";
 import { FieldProps } from "formik";
 import { HTMLInputTypeAttribute } from "react";
-import { get } from "lodash";
 interface Props extends FieldProps<any, any> {
   label?: string;
   type?: HTMLInputTypeAttribute;
@@ -22,6 +21,7 @@ const input = (props: Props) => {
     form: { setFieldValue, setFieldTouched, errors, touched },
     isDisabled,
   } = props;
+  console.log(errors);
 
   return (
     <div className={rootClassName}>
@@ -54,8 +54,8 @@ const input = (props: Props) => {
           }}
         />
         {touched[name] && errors[name] && (
-          <p className="text-xs font-semibold text-red-500">
-            {get(errors, name) ? get(errors, name, "") : null}
+          <p className="text-xs font-semibold text-red-500 mb-0 mt-0">
+            {errors[name] ? errors[name] : ""}
           </p>
         )}
       </div>

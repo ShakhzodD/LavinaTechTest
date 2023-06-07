@@ -2,44 +2,101 @@ import React from "react";
 import { Formik, FastField } from "formik";
 import { Fields } from "components";
 import * as Yup from "yup";
-import { Button } from "antd";
+import { Button, Form, Spin } from "antd";
+import usePost from "hooks/usePost";
+import { useQueryClient } from "@tanstack/react-query";
 
 const SignupSchema = Yup.object().shape({
-  title: Yup.string().required("Required"),
-  body: Yup.string().required("Required"),
+  name: Yup.string().required("Required"),
+  email: Yup.string().email().required("Email required"),
+  key: Yup.string().required("Required"),
+  secret: Yup.string().required("Required"),
 });
 const FormComponent = ({
   setModal,
   modal,
 }: {
-  setModal: Function;
-  modal: object;
+  setModal: (data: any) => any;
+  modal: { create: boolean; data: any; update: boolean };
 }) => {
+  const queryClient = useQueryClient();
+  const { mutate, isLoading } = usePost();
+
   return (
     <div>
       <Formik
-        initialValues={{ title: "", body: "" }}
+        initialValues={{
+          name: modal.data?.name,
+          email: modal.data?.email,
+          key: modal.data?.key,
+          secret: modal.data?.secret,
+        }}
         validationSchema={SignupSchema}
         onSubmit={value => {
-          console.log(value);
+          mutate(
+            {
+              url: modal.create ? "/userlavin" : `/userlavin/${modal.data?.id}`,
+              data: value,
+              method: modal.create ? "post" : "put",
+            },
+            {
+              onSuccess: () => {
+                setModal({ create: false, update: false, data: null });
+                queryClient.invalidateQueries({ queryKey: ["userlavin"] });
+              },
+            }
+          );
         }}
       >
-        {({ values }) => {
+        {({ values, handleSubmit }) => {
           return (
-            <>
-              <FastField
-                component={Fields.Input}
-                name="title"
-                rootClassName="mb-3"
-              />
-              <FastField component={Fields.Input} name="body" />
-              <div className="flex justify-end mt-5">
-                <Button htmlType="button" onClick={() => {}}>
-                  Add
-                </Button>
-                <Button type="primary">Add</Button>
-              </div>
-            </>
+            <Spin spinning={isLoading}>
+              <Form>
+                <FastField
+                  label="Name"
+                  component={Fields.Input}
+                  name="name"
+                  rootClassName="mb-2"
+                />
+                <FastField
+                  label="Email"
+                  component={Fields.Input}
+                  name="email"
+                  rootClassName="mb-2"
+                />
+                <FastField
+                  label="Key"
+                  component={Fields.Input}
+                  name="key"
+                  rootClassName="mb-2"
+                />
+                <FastField
+                  label="Secret"
+                  component={Fields.Input}
+                  name="secret"
+                  rootClassName="mb-2"
+                />
+                <div className="flex justify-end gap-3 mt-5">
+                  <Button
+                    htmlType="button"
+                    onClick={() => {
+                      setModal({ create: false, update: false, data: null });
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    type="primary"
+                    htmlType="submit"
+                    onClick={() => {
+                      handleSubmit();
+                    }}
+                  >
+                    Add
+                  </Button>
+                </div>
+              </Form>
+            </Spin>
           );
         }}
       </Formik>

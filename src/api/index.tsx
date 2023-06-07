@@ -17,8 +17,8 @@ api.defaults.headers.common["Content-Type"] = "application/json; charset=utf-8";
 api.interceptors.request.use(
   configs => {
     console.log(configs);
-
-    // configs.headers.Authorization = `Bearer ${storage.get('token')}`
+    const token = window.localStorage.getItem("token");
+    configs.headers.Authorization = `Bearer ${token}`;
     return configs;
   },
   error => {
