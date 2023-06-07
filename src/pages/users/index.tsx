@@ -45,9 +45,7 @@ const Users = () => {
             },
             onError: error => {
               notification.error({
-                message: get(error, "message")
-                  ? get(error, "message")
-                  : "Что-то пошло не так",
+                message: "Что-то пошло не так",
               });
             },
           }

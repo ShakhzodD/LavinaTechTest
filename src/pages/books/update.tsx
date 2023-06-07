@@ -1,5 +1,5 @@
 import { useQueryClient } from "@tanstack/react-query";
-import { Button, Form, Spin } from "antd";
+import { Button, Form, Spin, notification } from "antd";
 import { Fields } from "components";
 import { FastField, Formik } from "formik";
 import useGetAll from "hooks/useGetAll";
@@ -52,6 +52,11 @@ const Update = () => {
                   onSuccess: () => {
                     queryClient.invalidateQueries({ queryKey: ["books"] });
                     navigate("/books");
+                  },
+                  onError: error => {
+                    notification.error({
+                      message: "Что-то пошло не так",
+                    });
                   },
                 }
               );

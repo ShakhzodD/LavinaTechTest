@@ -1,11 +1,10 @@
-import React from "react";
-import { Formik, FastField } from "formik";
-import { Fields } from "components";
-import * as Yup from "yup";
-import { Button, Form, Spin } from "antd";
-import usePost from "hooks/usePost";
 import { useQueryClient } from "@tanstack/react-query";
+import { Button, Form, Spin, notification } from "antd";
+import { Fields } from "components";
+import { FastField, Formik } from "formik";
+import usePost from "hooks/usePost";
 import { useNavigate } from "react-router-dom";
+import * as Yup from "yup";
 
 const SignupSchema = Yup.object().shape({
   author: Yup.string().required("Required"),
@@ -42,6 +41,11 @@ const Create = () => {
                 onSuccess: () => {
                   queryClient.invalidateQueries({ queryKey: ["books"] });
                   navigate("/books");
+                },
+                onError: error => {
+                  notification.error({
+                    message: "Что-то пошло не так",
+                  });
                 },
               }
             );
