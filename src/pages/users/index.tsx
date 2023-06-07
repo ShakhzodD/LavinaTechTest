@@ -71,7 +71,8 @@ const Users = () => {
         <FormComponent {...{ modal, setModal }} />
       </Modal>
 
-      <div className="flex justify-end mb-5">
+      <div className="flex justify-between items-center mb-5">
+        <h2>Users list</h2>
         <Button
           htmlType="button"
           type="primary"
